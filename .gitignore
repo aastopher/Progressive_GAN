@@ -1,0 +1,10 @@
+# byte-compiled / optimized / DLL files
+__pycache__/
+imgs/
+*.py[cod]
+
+# os specific
+.DS_Store
+
+# jupyter notbooks
+.ipynb_checkpoints
