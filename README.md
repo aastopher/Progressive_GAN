@@ -1,6 +1,6 @@
 # ProGAN (Progressive Generative Adversarial Network) Trained on Cyberpunk Cityscapes
 
-The purpose of this project is to expand knowledge of traditional GAN architectures by exploring NVIDIA's Progressive GAN research.
+The purpose of this project is to expand knowledge of traditional GAN architectures by exploring NVIDIA's Progressive GAN research. [Progressive Growing of GANs for Improved Quality, Stability, and Variation](https://research.nvidia.com/publication/2018-04_progressive-growing-gans-improved-quality-stability-and-variation)
 
 ### Running this notebook (NOT IMPLEMENTED YET)
 * The notebook will check for the presence of the dataset, if the folder does not exist (it will not on first run) then it will download the dataset automatically.
