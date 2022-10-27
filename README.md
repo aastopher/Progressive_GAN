@@ -2,6 +2,12 @@
 
 The purpose of this project is to expand knowledge of traditional GAN architectures by exploring NVIDIA's Progressive GAN research. [Progressive Growing of GANs for Improved Quality, Stability, and Variation](https://research.nvidia.com/publication/2018-04_progressive-growing-gans-improved-quality-stability-and-variation)
 
+## misc. commands
+* to generate sample images run `python .\generate_images.py` **NOTE:** Please clear results folder before pushing changes.
+* configure sample size and image size generated in `generate_images.py`
+* to start the tensorboard and explore the current models training progress run `tensorboard --logdir logs`
+* **WARNING! This will overwrite existing models!** to re-train the model make sure `LOAD_MODEL` in `config.py` is set to `False` then run `python .\train.py`
+
 ### Running this notebook (NOT IMPLEMENTED YET)
 * The notebook will check for the presence of the dataset, if the folder does not exist (it will not on first run) then it will download the dataset automatically.
 * Given that the pickled models exist, the models will automatically be loaded an usable on your current device pre-trained.
