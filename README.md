@@ -8,11 +8,6 @@ The purpose of this project is to expand knowledge of traditional GAN architectu
 * to start the tensorboard and explore the current models training progress run `tensorboard --logdir logs`
 * **WARNING! This will overwrite existing models!** to re-train the model make sure `LOAD_MODEL` in `config.py` is set to `False` then run `python .\train.py`
 
-### Running this notebook (NOT IMPLEMENTED YET)
-* The notebook will check for the presence of the dataset, if the folder does not exist (it will not on first run) then it will download the dataset automatically.
-* Given that the pickled models exist, the models will automatically be loaded an usable on your current device pre-trained.
-* The notebook will check for the pickled models, if either model does not exists it will begin to re-train on the current device. (i.e. just delete or remove the current model files to re-train)
-
 ### References
 
 ```
