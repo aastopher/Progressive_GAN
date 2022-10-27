@@ -85,8 +85,8 @@ def generate_examples(gen, steps, truncation=0.7, n=100):
     alpha = 1.0
     for i in range(n):
         with torch.no_grad():
-            # noise = torch.tensor(truncnorm.rvs(-truncation, truncation, size=(1, config.Z_DIM, 1, 1)), device=config.DEVICE, dtype=torch.float32)
-            noise = torch.randn(1, config.Z_DIM, 1, 1).to(config.DEVICE)
+            noise = torch.tensor(truncnorm.rvs(-truncation, truncation, size=(1, config.Z_DIM, 1, 1)), device=config.DEVICE, dtype=torch.float32)
+            # noise = torch.randn(1, config.Z_DIM, 1, 1).to(config.DEVICE)
             img = gen(noise, alpha, steps)
             save_image(img*0.5+0.5, Path(f"{config.RESULTS}/img_{i}.png"))
     gen.train()
