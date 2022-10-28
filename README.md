@@ -11,7 +11,7 @@ The purpose of this project is to expand knowledge of traditional GAN architectu
 * As a safety pre-caution you must **REMOVE** the imgs folder this command will **NOT** overwrite an existing imgs folder.
 
 ## Train the model
-* **WARNING! This will overwrite existing models!** `python .\train.py` - continue training or re-train model.
+* **WARNING! This can overwrite existing models!** `python .\train.py` - continue training or re-train model.
 * Changing the `LOAD_MODEL` global in `config.py`; chooses between re-training (`False`) or continuing training (`True`) for the model.
 
 ## Generate Samples
