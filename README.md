@@ -10,6 +10,11 @@ The purpose of this project is to expand knowledge of traditional GAN architectu
 * `python utils.py download` - download the cybercity images dataset.
 * As a safety pre-caution you must **REMOVE** the imgs folder this command will **NOT** overwrite an existing imgs folder.
 
+### Remove Duplicate Images
+* `python utils.py removedups` - this will remove duplicate images using an image hash function.
+* The `hash_size` for this function can be customized to have a looser hash criteria i.e accepting a larger difference between "duplicates"
+* This function will output how many duplicates have been removed and a path list for all duplicate images. **NOTE:** paths are not paired with duplicates.
+
 ### Train the model
 * **WARNING! This can overwrite existing models!** 
 * `python train.py` - continue training or re-train model.
