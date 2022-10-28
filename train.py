@@ -2,15 +2,13 @@
 
 import torch
 import torch.optim as optim
-import torchvision.datasets as datasets
-import torchvision.transforms as transforms
-from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from utils import (
     gradient_penalty,
     plot_to_tensorboard,
     save_checkpoint,
-    load_checkpoint
+    load_checkpoint,
+    get_loader
 )
 from model import Discriminator, Generator
 from math import log2
@@ -18,33 +16,6 @@ from tqdm import tqdm
 import config
 
 torch.backends.cudnn.benchmarks = True
-
-
-def get_loader(image_size):
-    transform = transforms.Compose(
-        [
-            transforms.Resize((image_size, image_size)),
-            transforms.ToTensor(),
-            transforms.RandomHorizontalFlip(p=0.5),
-            transforms.Normalize(
-                [0.5 for _ in range(config.CHANNELS_IMG)],
-                [0.5 for _ in range(config.CHANNELS_IMG)],
-            ),
-        ]
-    )
-
-    batch_size = config.BATCH_SIZES[int(log2(image_size / 4))]
-    dataset = datasets.ImageFolder(root=config.DATASET, transform=transform)
-    loader = DataLoader(
-        dataset,
-        batch_size=batch_size,
-        shuffle=True,
-        num_workers=config.NUM_WORKERS,
-        pin_memory=True,
-    )
-    
-    return loader, dataset
-
 
 def train_fn(critic, gen, loader, dataset, step, alpha, opt_critic, opt_gen, tensorboard_step, writer, scaler_gen, scaler_critic,):
     loop = tqdm(loader, leave=True)
@@ -147,7 +118,7 @@ def main():
     step = int(log2(config.START_TRAIN_AT_IMG_SIZE / 4))
     for num_epochs in config.PROGRESSIVE_EPOCHS[step:]:
         alpha = 1e-5  # start with very low alpha
-        loader, dataset = get_loader(4 * 2 ** step)  # 4->0, 8->1, 16->2, 32->3, 64 -> 4
+        loader, dataset = get_loader(4 * 2 ** step)  # 4->0, 8->1, 16->2, 32->3, 64->4, 128->5, 256->6, 512->7, 1024->8
         print(f"Current image size: {4 * 2 ** step}")
 
         for epoch in range(num_epochs):

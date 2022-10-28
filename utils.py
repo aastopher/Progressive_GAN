@@ -14,6 +14,39 @@ from scipy.stats import truncnorm
 import click
 import gdown
 import zipfile
+import imagehash
+from PIL import Image
+import torchvision.datasets as datasets
+import torchvision.transforms as transforms
+from torch.utils.data import DataLoader
+from math import log2
+from tqdm import tqdm
+import pandas as pd
+
+def get_loader(image_size):
+    transform = transforms.Compose(
+        [
+            transforms.Resize((image_size, image_size)),
+            transforms.ToTensor(),
+            transforms.RandomHorizontalFlip(p=0.5),
+            transforms.Normalize(
+                [0.5 for _ in range(config.CHANNELS_IMG)],
+                [0.5 for _ in range(config.CHANNELS_IMG)],
+            ),
+        ]
+    )
+
+    batch_size = config.BATCH_SIZES[int(log2(image_size / 4))]
+    dataset = datasets.ImageFolder(root=config.DATASET, transform=transform)
+    loader = DataLoader(
+        dataset,
+        batch_size=batch_size,
+        shuffle=True,
+        num_workers=config.NUM_WORKERS,
+        pin_memory=True,
+    )
+    
+    return loader, dataset
 
 # Print losses occasionally and print to tensorboard
 def plot_to_tensorboard(
@@ -84,13 +117,62 @@ def seed_everything(seed=42):
     torch.backends.cudnn.benchmark = False
 
 #### CLI Functions ####
+def remove_dups():
+    '''Inspired from https://github.com/JohannesBuchner/imagehash repository'''
+
+    def hash_img(hashfunc, path, hash_size=8):
+            '''takes an image path, returns a hash value'''
+
+            image = Image.open(path)
+            # print(path)
+
+            # remove alpha
+            if image.mode != 'RGBA':
+                pass
+            else:
+                canvas = Image.new('RGBA', image.size, (255,255,255,255))
+                canvas.paste(image, mask=image)
+                image = canvas.convert('RGB')
+
+            # collect zdata
+            image = image.convert("L").resize((hash_size, hash_size), Image.Resampling.LANCZOS)
+            data = image.getdata()
+            quantiles = np.arange(100)
+            quantiles_values = np.percentile(data, quantiles)
+            zdata = (np.interp(data, quantiles_values, quantiles) / 100 * 255).astype(np.uint8)
+            image.putdata(zdata)
+
+            return hashfunc(image)
+
+    # collect all image_name, hash pairs
+    img_list = os.listdir(Path(f"{config.DATASET}/imgs/"))
+    img_hash_list = []
+    for image_name in img_list:
+        img_path = Path(f"{config.DATASET}/imgs/{image_name}")
+        img_hash = hash_img(imagehash.dhash, img_path, hash_size = 8) # adjust hash_size to change duplicate distance
+        img_hash_list.append((image_name, str(img_hash)))
+
+    # collect duplicate lists and remove second duplicate files
+    img_hash_df = pd.DataFrame(img_hash_list, columns=['image_name', 'img_hash'])
+    first_dup_list = img_hash_df[img_hash_df['img_hash'].duplicated(keep = 'first')]['image_name'].to_list()
+    second_dup_list = img_hash_df[img_hash_df['img_hash'].duplicated(keep = 'last')]['image_name'].to_list()
+    print(f'removing {len(second_dup_list)} duplicate images...')
+    for dup in second_dup_list:
+        os.remove(Path(f"{config.DATASET}/imgs/{dup}"))
+
+    # show duplicate image paths
+    for first, second in list(zip(first_dup_list, second_dup_list)):
+        print(Path(f"{config.DATASET}/imgs/{first}"))
+        print(Path(f"{config.DATASET}/imgs/{second}"))
+    
+
 def download_data():
     # training imgs download url + output file name definition
     url = 'https://drive.google.com/uc?id=1Jn-FOKZ6LoRkhXP3jwag_PupceV-KEvY'
     outfile = "imgs.zip"
 
     # download imgs if imgs folder does not exist
-    if not os.path.exists("imgs"):
+    if not os.path.exists(config.DATASET):
         gdown.download(url, outfile, quiet=False)
 
         with zipfile.ZipFile(outfile, 'r') as zip_ref:
@@ -149,6 +231,9 @@ def cli(args, option):
         download_data()
     elif option == 'removedups':
         print(f'option: {option}')
+        step = 3
+        loader, dataset = get_loader(4 * 2 ** step)
+        remove_dups(loader, dataset)
 
 if __name__ == "__main__":
     cli()
