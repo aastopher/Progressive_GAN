@@ -12,6 +12,8 @@ from model import Generator
 from torchvision.utils import save_image
 from scipy.stats import truncnorm
 import click
+import gdown
+import zipfile
 
 # Print losses occasionally and print to tensorboard
 def plot_to_tensorboard(
@@ -81,24 +83,26 @@ def seed_everything(seed=42):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
-
 #### CLI Functions ####
-def generate_examples(gen, steps, truncation=0.7, n=100):
+def download_data():
+    # training imgs download url + output file name definition
+    url = 'https://drive.google.com/uc?id=1Jn-FOKZ6LoRkhXP3jwag_PupceV-KEvY'
+    outfile = "imgs.zip"
+
+    # download imgs if imgs folder does not exist
+    if not os.path.exists("imgs"):
+        gdown.download(url, outfile, quiet=False)
+
+        with zipfile.ZipFile(outfile, 'r') as zip_ref:
+            zip_ref.extractall()
+        os.remove("imgs.zip")
+        os.rename("cybercity_imgs","imgs")
+
+def generate_samples(args):
     """
     Tried using truncation trick here but not sure it actually helped anything, you can
     remove it if you like and just sample from torch.randn
     """
-    gen.eval()
-    alpha = 1.0
-    for i in range(n):
-        with torch.no_grad():
-            noise = torch.tensor(truncnorm.rvs(-truncation, truncation, size=(1, config.Z_DIM, 1, 1)), device=config.DEVICE, dtype=torch.float32)
-            # noise = torch.randn(1, config.Z_DIM, 1, 1).to(config.DEVICE)
-            img = gen(noise, alpha, steps)
-            save_image(img*0.5+0.5, Path(f"{config.RESULTS}/img_{i}.png"))
-    gen.train()
-
-def generate_imgs(args):
     num_samples, img_size = args
     img_size_dict = {0:'4x4', 1:'8x8', 2:'16x16', 3:'32x32', 4:'64x64', 5:'128x128', 6:'256x256', 7:'512x512', 8:'1024x1024'}
     gen = Generator(
@@ -107,7 +111,17 @@ def generate_imgs(args):
     opt_gen = optim.Adam(gen.parameters(), lr=config.LEARNING_RATE, betas=(0.0, 0.99))
     load_checkpoint(config.CHECKPOINT_GEN, gen, opt_gen, config.LEARNING_RATE)
     print(f'Generating {num_samples}, {img_size_dict[img_size]} images...')
-    generate_examples(gen, img_size, truncation=0.7, n=num_samples)
+
+    gen.eval()
+    alpha = 1.0
+    truncation = 0.7
+    for i in range(num_samples):
+        with torch.no_grad():
+            noise = torch.tensor(truncnorm.rvs(-truncation, truncation, size=(1, config.Z_DIM, 1, 1)), device=config.DEVICE, dtype=torch.float32)
+            # noise = torch.randn(1, config.Z_DIM, 1, 1).to(config.DEVICE)
+            img = gen(noise, alpha, img_size)
+            save_image(img*0.5+0.5, Path(f"{config.RESULTS}/img_{i}.png"))
+    gen.train()
 
 
 # CLI Driver ##
@@ -115,17 +129,24 @@ def generate_imgs(args):
 @click.argument('option', required=False)
 @click.argument('args', required=False, nargs=-1)
 def cli(args, option):
-    if option == 'sample':
+    commands = ['sample', 'download', 'removedups']
+
+    if not option:
+        print(f'no option provided')
+    elif option not in commands:
+        print(f'invalid option: {option}')
+    elif option == 'sample':
         if not args:
             args = (10,3)
         else:
             args = tuple(map(int, args))
         print(f'sample: {args}')
-        generate_imgs(args)
-    elif not option:
-        print(f'no option provided')
-    else:
-        print(f'invalid option: {option}')
+        generate_samples(args)
+    elif option == 'download':
+        print(f'option: {option}')
+        download_data()
+    elif option == 'removedups':
+        print(f'option: {option}')
 
 if __name__ == "__main__":
     cli()
