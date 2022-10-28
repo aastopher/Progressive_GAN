@@ -12,7 +12,7 @@ The purpose of this project is to expand knowledge of traditional GAN architectu
 
 ### Train the model
 * **WARNING! This can overwrite existing models!** 
-* `python .\train.py` - continue training or re-train model.
+* `python train.py` - continue training or re-train model.
 * Changing the `LOAD_MODEL` global in `config.py`; chooses between re-training (`False`) or continuing training (`True`) for the model.
 
 ### Generate Samples
