@@ -91,3 +91,6 @@ def generate_examples(gen, steps, truncation=0.7, n=100):
             img = gen(noise, alpha, steps)
             save_image(img*0.5+0.5, Path(f"{config.RESULTS}/img_{i}.png"))
     gen.train()
+
+if __name__ == "__main__":
+    pass
