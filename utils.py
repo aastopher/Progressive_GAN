@@ -120,6 +120,8 @@ def generate_samples(args):
             noise = torch.tensor(truncnorm.rvs(-truncation, truncation, size=(1, config.Z_DIM, 1, 1)), device=config.DEVICE, dtype=torch.float32)
             # noise = torch.randn(1, config.Z_DIM, 1, 1).to(config.DEVICE)
             img = gen(noise, alpha, img_size)
+            if not os.path.exists(config.RESULTS):
+                os.makedirs(config.RESULTS)
             save_image(img*0.5+0.5, Path(f"{config.RESULTS}/img_{i}.png"))
     gen.train()
 
