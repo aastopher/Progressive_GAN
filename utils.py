@@ -231,9 +231,7 @@ def cli(args, option):
         download_data()
     elif option == 'removedups':
         print(f'option: {option}')
-        step = 3
-        loader, dataset = get_loader(4 * 2 ** step)
-        remove_dups(loader, dataset)
+        remove_dups()
 
 if __name__ == "__main__":
     cli()
