@@ -1,3 +1,4 @@
+from email.policy import default
 import torch
 import random
 import numpy as np
@@ -6,8 +7,11 @@ from pathlib import Path
 import torchvision
 import torch.nn as nn
 import config
+import torch.optim as optim
+from model import Generator
 from torchvision.utils import save_image
 from scipy.stats import truncnorm
+import click
 
 # Print losses occasionally and print to tensorboard
 def plot_to_tensorboard(
@@ -77,6 +81,8 @@ def seed_everything(seed=42):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
+
+#### CLI Functions ####
 def generate_examples(gen, steps, truncation=0.7, n=100):
     """
     Tried using truncation trick here but not sure it actually helped anything, you can
@@ -92,5 +98,34 @@ def generate_examples(gen, steps, truncation=0.7, n=100):
             save_image(img*0.5+0.5, Path(f"{config.RESULTS}/img_{i}.png"))
     gen.train()
 
+def generate_imgs(args):
+    num_samples, img_size = args
+    img_size_dict = {0:'4x4', 1:'8x8', 2:'16x16', 3:'32x32', 4:'64x64', 5:'128x128', 6:'256x256', 7:'512x512', 8:'1024x1024'}
+    gen = Generator(
+            config.Z_DIM, config.IN_CHANNELS, img_channels=config.CHANNELS_IMG
+        ).to(config.DEVICE)
+    opt_gen = optim.Adam(gen.parameters(), lr=config.LEARNING_RATE, betas=(0.0, 0.99))
+    load_checkpoint(config.CHECKPOINT_GEN, gen, opt_gen, config.LEARNING_RATE)
+    print(f'Generating {num_samples}, {img_size_dict[img_size]} images...')
+    generate_examples(gen, img_size, truncation=0.7, n=num_samples)
+
+
+# CLI Driver ##
+@click.command()
+@click.argument('option', required=False)
+@click.argument('args', required=False, nargs=-1)
+def cli(args, option):
+    if option == 'sample':
+        if not args:
+            args = (10,3)
+        else:
+            args = tuple(map(int, args))
+        print(f'sample: {args}')
+        generate_imgs(args)
+    elif not option:
+        print(f'no option provided')
+    else:
+        print(f'invalid option: {option}')
+
 if __name__ == "__main__":
-    pass
+    cli()

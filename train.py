@@ -10,8 +10,7 @@ from utils import (
     gradient_penalty,
     plot_to_tensorboard,
     save_checkpoint,
-    load_checkpoint,
-    generate_examples,
+    load_checkpoint
 )
 from model import Discriminator, Generator
 from math import log2
