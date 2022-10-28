@@ -2,13 +2,23 @@
 
 The purpose of this project is to expand knowledge of traditional GAN architectures by exploring NVIDIA's Progressive GAN research. [Progressive Growing of GANs for Improved Quality, Stability, and Variation](https://research.nvidia.com/publication/2018-04_progressive-growing-gans-improved-quality-stability-and-variation)
 
-## Basic commands
-* to generate sample images run `python utils.py sample` by default this will generate 10 images at 32x32.
-* sample command can be customized to generate a chosen amount of images at a chosen size `python utils.py sample <num_images> <size_factor>`
-* size factors are as follows `0 = 4x4, 1 = 8x8, 2 = 16x16, 3 = 32x32, 4 = 64x64, 5 = 128x128, 6 = 256x256, 7 = 512x512, 8 = 1024x1024`
-* **NOTE:** Please clear results folder before pushing changes.
-* to start the tensorboard and explore the current models training progress run `tensorboard --logdir logs`
-* **WARNING! This will overwrite existing models!** to re-train the model make sure `LOAD_MODEL` in `config.py` is set to `False` then run `python .\train.py`
+
+## Explore Tensorboard Results
+* `tensorboard --logdir logs` - to start the tensorboard and explore the current models training progress.
+
+## Download the Data
+* `python utils.py download` - download the cybercity images dataset.
+* As a safety pre-caution you must **REMOVE** the imgs folder this command will **NOT** overwrite an existing imgs folder.
+
+## Train the model
+* **WARNING! This will overwrite existing models!** `python .\train.py` - continue training or re-train model.
+* Changing the `LOAD_MODEL` global in `config.py`; chooses between re-training (`False`) or continuing training (`True`) for the model.
+
+## Generate Samples
+* `python utils.py sample` - generates sample images, by default this will generate 10 images at 32x32.
+* This command can be customized to generate a chosen amount of images at a chosen size `python utils.py sample <num_images> <size_factor>`
+* Size factors: `0 = 4x4, 1 = 8x8, 2 = 16x16, 3 = 32x32, 4 = 64x64, 5 = 128x128, 6 = 256x256, 7 = 512x512, 8 = 1024x1024`
+* **WARNING:** Clear results folder before pushing changes.
 
 ### References
 
