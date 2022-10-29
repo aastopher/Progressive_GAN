@@ -221,7 +221,7 @@ def cli(args, option):
         print(f'invalid option: {option}')
     elif option == 'sample':
         if not args:
-            args = (10,3)
+            args = (10,4)
         else:
             args = tuple(map(int, args))
         print(f'sample: {args}')
