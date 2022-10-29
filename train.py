@@ -18,7 +18,7 @@ from pathlib import Path
 
 torch.backends.cudnn.benchmarks = True
 
-def train_fn(critic, gen, loader, dataset, step, alpha, opt_critic, opt_gen, tensorboard_step, writer, scaler_gen, scaler_critic,):
+def train_fn(critic, gen, loader, dataset, step, alpha, opt_critic, opt_gen, tensorboard_step, writer, scaler_gen, scaler_critic,img_size):
     loop = tqdm(loader, leave=True)
     for batch_idx, (real, _) in enumerate(loop):
         real = real.to(config.DEVICE)
@@ -69,6 +69,7 @@ def train_fn(critic, gen, loader, dataset, step, alpha, opt_critic, opt_gen, ten
                 loss_gen.item(),
                 real.detach(),
                 fixed_fakes.detach(),
+                img_size,
                 tensorboard_step,
             )
             tensorboard_step += 1
@@ -130,7 +131,7 @@ def main():
 
         for epoch in range(num_epochs):
             print(f"Epoch [{epoch+1}/{num_epochs}]")
-            tensorboard_step, alpha = train_fn(critic, gen, loader, dataset, step, alpha, opt_critic, opt_gen, tensorboard_step, writer, scaler_gen, scaler_critic)
+            tensorboard_step, alpha = train_fn(critic, gen, loader, dataset, step, alpha, opt_critic, opt_gen, tensorboard_step, writer, scaler_gen, scaler_critic, img_size)
 
             if config.SAVE_MODEL:
                 save_checkpoint(gen, opt_gen, filename=config.CHECKPOINT_GEN)
