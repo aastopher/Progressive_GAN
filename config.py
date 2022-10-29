@@ -6,10 +6,10 @@ from pathlib import Path
 
 CWD = os.getcwd() # current working directory
 
-# START_TRAIN_AT_IMG_SIZE = 128
 START_TRAIN_AT_IMG_SIZE = 4
 DATASET = Path(f"{CWD}/imgs")
 RESULTS = Path(f"{CWD}/results")
+CURRENT_IMG_SIZE = Path(f"{CWD}/models/img_size.dat")
 CHECKPOINT_GEN = Path(f"{CWD}/models/generator.pth")
 CHECKPOINT_CRITIC = Path(f"{CWD}/models/critic.pth")
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
