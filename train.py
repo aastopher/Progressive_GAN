@@ -14,6 +14,7 @@ from model import Discriminator, Generator
 from math import log2
 from tqdm import tqdm
 import config
+from pathlib import Path
 
 torch.backends.cudnn.benchmarks = True
 
@@ -109,17 +110,23 @@ def main():
         load_checkpoint(
             config.CHECKPOINT_CRITIC, critic, opt_critic, config.LEARNING_RATE,
         )
+        current_image_size = int(config.CURRENT_IMG_SIZE.read_text())
+    else:
+        current_image_size = config.START_TRAIN_AT_IMG_SIZE
 
     gen.train()
     critic.train()
 
     tensorboard_step = 0
     # start at step that corresponds to img size that we set in config
-    step = int(log2(config.START_TRAIN_AT_IMG_SIZE / 4))
+    step = int(log2(current_image_size / 4))
     for num_epochs in config.PROGRESSIVE_EPOCHS[step:]:
         alpha = 1e-5  # start with very low alpha
-        loader, dataset = get_loader(4 * 2 ** step)  # 4->0, 8->1, 16->2, 32->3, 64->4, 128->5, 256->6, 512->7, 1024->8
-        print(f"Current image size: {4 * 2 ** step}")
+        img_size = 4 * 2 ** step # compute image size
+        loader, dataset = get_loader(img_size)  # 4->0, 8->1, 16->2, 32->3, 64->4, 128->5, 256->6, 512->7, 1024->8
+        print(f"Current image size: {img_size}")
+
+        print(f"{img_size}", file=open(config.CURRENT_IMG_SIZE, 'w'))
 
         for epoch in range(num_epochs):
             print(f"Epoch [{epoch+1}/{num_epochs}]")
