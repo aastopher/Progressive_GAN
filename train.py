@@ -14,7 +14,7 @@ from model import Discriminator, Generator
 from math import log2
 from tqdm import tqdm
 import config
-from pathlib import Path
+import time
 
 torch.backends.cudnn.benchmarks = True
 
@@ -102,7 +102,7 @@ def main():
     scaler_gen = torch.cuda.amp.GradScaler()
 
     # for tensorboard plotting
-    writer = SummaryWriter(f"logs/ProGAN")
+    writer = SummaryWriter(f"logs/{time.strftime('%Y%m%d-%H%M%S')}")
 
     if config.LOAD_MODEL:
         load_checkpoint(
