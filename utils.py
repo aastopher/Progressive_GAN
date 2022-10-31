@@ -23,9 +23,37 @@ from math import log2
 from tqdm import tqdm
 import pandas as pd
 
+# def get_loader(image_size):
+#     transform = transforms.Compose(
+#         [
+#             transforms.Resize((image_size, image_size)),
+#             transforms.ToTensor(),
+#             transforms.RandomHorizontalFlip(p=0.5),
+#             transforms.Normalize(
+#                 [0.5 for _ in range(config.CHANNELS_IMG)],
+#                 [0.5 for _ in range(config.CHANNELS_IMG)],
+#             ),
+#         ]
+#     )
+
+#     batch_size = config.BATCH_SIZES[int(log2(image_size / 4))]
+#     dataset = datasets.ImageFolder(root=config.DATASET, transform=transform)
+#     loader = DataLoader(
+#         dataset,
+#         batch_size=batch_size,
+#         shuffle=True,
+#         num_workers=config.NUM_WORKERS,
+#         pin_memory=True,
+#     )
+    
+#     return loader, dataset
+
 def get_loader(image_size):
     transform = transforms.Compose(
         [
+            # transforms.functional.resize(size=1024),
+            transforms.Resize(1024),
+            # transforms.RandomCrop((1024, 1024)),
             transforms.Resize((image_size, image_size)),
             transforms.ToTensor(),
             transforms.RandomHorizontalFlip(p=0.5),
@@ -204,16 +232,23 @@ def generate_samples(args):
             img = gen(noise, alpha, img_size)
             if not os.path.exists(config.RESULTS): # check if results folder exists
                 os.makedirs(config.RESULTS) # create results folder if does not exist
+            print(Path(f"{config.RESULTS}/img_{i}.png"))
             save_image(img*0.5+0.5, Path(f"{config.RESULTS}/img_{i}.png"))
     gen.train()
 
+def prev_imgs():
+    '''yields first real image batch to results folder'''
+    loader, _ = get_loader(1024)
+    data, _ = next(iter(loader))
+    for i in range(data.size(0)):
+           torchvision.utils.save_image(data[i, :, :, :]*0.5+0.5, Path(f"{config.RESULTS}/img_{i}.png"))
 
 # CLI Driver ##
 @click.command()
 @click.argument('option', required=False)
 @click.argument('args', required=False, nargs=-1)
 def cli(args, option):
-    commands = ['sample', 'download', 'removedups']
+    commands = ['sample', 'download', 'removedups','transform']
 
     if not option:
         print(f'no option provided')
@@ -232,6 +267,9 @@ def cli(args, option):
     elif option == 'removedups':
         print(f'option: {option}')
         remove_dups()
+    elif option == 'transform':
+        print(f'option: {option}')
+        prev_imgs()
 
 if __name__ == "__main__":
     cli()
