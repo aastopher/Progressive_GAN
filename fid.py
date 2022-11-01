@@ -13,7 +13,7 @@ class InceptionV3(nn.Module):
     # Maps feature dimensionality to their output blocks indices
     BLOCK_INDEX_BY_DIM = {
         64: 0,   # First max pooling features
-        192: 1,  # Second max pooling featurs
+        192: 1,  # Second max pooling features
         768: 2,  # Pre-aux classifier features
         2048: 3  # Final average pooling features
     }
@@ -184,9 +184,9 @@ def calculate_frechet_distance(mu1, sigma1, mu2, sigma2, eps=1e-6):
     return (diff.dot(diff) + np.trace(sigma1) +
             np.trace(sigma2) - 2 * tr_covmean)
 
-def calculate_fretchet(images_real,images_fake,model):
-     mu_1,std_1=calculate_activation_statistics(images_real,model,cuda=True) # make generic for device + add batch size and dims?
-     mu_2,std_2=calculate_activation_statistics(images_fake,model,cuda=True)
+def calculate_fretchet(images_real,images_fake,model,batch_size):
+     mu_1,std_1=calculate_activation_statistics(images_real,model,batch_size=batch_size,cuda=True) # make generic for device + add batch size and dims?
+     mu_2,std_2=calculate_activation_statistics(images_fake,model,batch_size=batch_size,cuda=True)
     
      """get fretched distance"""
      fid_value = calculate_frechet_distance(mu_1, std_1, mu_2, std_2)

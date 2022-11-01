@@ -15,6 +15,7 @@ from math import log2
 from tqdm import tqdm
 import config
 import time
+import fid
 
 torch.backends.cudnn.benchmarks = True
 
@@ -60,6 +61,8 @@ def train_fn(critic, gen, loader, dataset, step, alpha, opt_critic, opt_gen, ten
         )
         alpha = min(alpha, 1)
 
+        fretchet_dist = fid.calculate_fretchet(real, fake, fid.model, cur_batch_size) 
+
         if batch_idx % 500 == 0:
             with torch.no_grad():
                 fixed_fakes = gen(config.FIXED_NOISE, alpha, step) * 0.5 + 0.5
@@ -67,6 +70,7 @@ def train_fn(critic, gen, loader, dataset, step, alpha, opt_critic, opt_gen, ten
                 writer,
                 loss_critic.item(),
                 loss_gen.item(),
+                fretchet_dist,
                 real.detach(),
                 fixed_fakes.detach(),
                 img_size,

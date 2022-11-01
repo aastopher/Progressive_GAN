@@ -77,9 +77,10 @@ def get_loader(image_size):
     return loader, dataset
 
 # Print losses occasionally and print to tensorboard
-def plot_to_tensorboard(writer, loss_critic, loss_gen, real, fake, img_size, tensorboard_step):
+def plot_to_tensorboard(writer, loss_critic, loss_gen, fid, real, fake, img_size, tensorboard_step):
     writer.add_scalar("Loss Critic", loss_critic, global_step=tensorboard_step)
     writer.add_scalar("Loss Generator", loss_gen, global_step=tensorboard_step)
+    writer.add_scalar("FID", fid, global_step=tensorboard_step)
     writer.add_scalar("Image Size", img_size, global_step=tensorboard_step)
 
     with torch.no_grad():
