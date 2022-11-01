@@ -145,6 +145,22 @@ def seed_everything(seed=42):
     torch.backends.cudnn.benchmark = False
 
 #### CLI Functions ####
+def init():
+    '''download dataset then create models and logs directories'''
+    url = 'https://drive.google.com/uc?id=1Jn-FOKZ6LoRkhXP3jwag_PupceV-KEvY'
+    outfile = "imgs.zip"
+
+    # download imgs if imgs folder does not exist
+    if not os.path.exists(config.DATASET):
+        gdown.download(url, outfile, quiet=False)
+
+        with zipfile.ZipFile(outfile, 'r') as zip_ref:
+            zip_ref.extractall()
+        os.remove("imgs.zip")
+        os.rename("cybercity_imgs","imgs")
+    os.mkdir(config.MODEL_PATH)
+    os.mkdir(config.LOGS_PATH)
+
 def remove_dups():
     '''Inspired from https://github.com/JohannesBuchner/imagehash repository'''
 
@@ -194,19 +210,22 @@ def remove_dups():
         print(Path(f"{config.DATASET}/imgs/{second}"))
     
 
-def download_data():
-    # training imgs download url + output file name definition
-    url = 'https://drive.google.com/uc?id=1Jn-FOKZ6LoRkhXP3jwag_PupceV-KEvY'
-    outfile = "imgs.zip"
+def download_models():
+    '''download pre-trained models for exploration'''
+    models_url = 'https://drive.google.com/uc?id=1Jn-FOKZ6LoRkhXP3jwag_PupceV-KEvY'
+    logs_url = 'https://drive.google.com/uc?id=1Jn-FOKZ6LoRkhXP3jwag_PupceV-KEvY'
 
-    # download imgs if imgs folder does not exist
-    if not os.path.exists(config.DATASET):
-        gdown.download(url, outfile, quiet=False)
+    model_files = "models.zip"
+    logs_files = "logs.zip"
 
-        with zipfile.ZipFile(outfile, 'r') as zip_ref:
-            zip_ref.extractall()
-        os.remove("imgs.zip")
-        os.rename("cybercity_imgs","imgs")
+    # # download imgs if imgs folder does not exist
+    # if not os.path.exists(config.DATASET):
+    #     gdown.download(url, outfile, quiet=False)
+
+    #     with zipfile.ZipFile(outfile, 'r') as zip_ref:
+    #         zip_ref.extractall()
+    #     os.remove("imgs.zip")
+    #     os.rename("cybercity_imgs","imgs")
 
 def generate_samples(args):
     """
@@ -252,12 +271,15 @@ def prev_imgs(args):
 @click.argument('option', required=False)
 @click.argument('args', required=False, nargs=-1)
 def cli(args, option):
-    commands = ['sample', 'download', 'removedups','transform']
+    commands = ['init', 'sample', 'download', 'removedups','transform']
 
     if not option:
         print(f'no option provided')
     elif option not in commands:
         print(f'invalid option: {option}')
+    elif option == 'init':
+        print(f'option: {option}')
+        init()
     elif option == 'sample':
         if not args:
             args = (10,4)
@@ -267,7 +289,7 @@ def cli(args, option):
         generate_samples(args)
     elif option == 'download':
         print(f'option: {option}')
-        download_data()
+        download_models()
     elif option == 'removedups':
         print(f'option: {option}')
         remove_dups()

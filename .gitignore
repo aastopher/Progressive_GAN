@@ -2,6 +2,8 @@
 __pycache__/
 imgs/
 results/
+logs/
+models/
 *.py[cod]
 
 # os specific
