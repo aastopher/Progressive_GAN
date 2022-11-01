@@ -10,8 +10,8 @@ The purpose of this project is to expand knowledge of traditional GAN architectu
 * As a safety pre-caution you must **REMOVE** the imgs folder this command will **NOT** overwrite an existing project files.
 
 ### Download the Pre-trained models and results
-* **WARNING! This will overwrite existing models!** 
 * `python utils.py download` - download the pre-trained models and results
+* this command will NOT override existing models you must delete both `models` and `logs` folders to download the models and results
 
 ### Explore Tensorboard Results
 * `tensorboard --logdir logs` - to start the tensorboard and explore the current models training progress.

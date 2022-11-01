@@ -211,21 +211,30 @@ def remove_dups():
     
 
 def download_models():
-    '''download pre-trained models for exploration'''
-    models_url = 'https://drive.google.com/uc?id=1K6eYRxiGku7nIgbhBfd5kciaDu-X2zE1' # ProGAN_logs.zip
-    logs_url = 'https://drive.google.com/uc?id=1KIoCACFmQLmUKdbH7tmymBeYM0wWgbNl' # ProGAN_models.zip
+    '''download pre-trained models for exploration''' 
+    models_url = 'https://drive.google.com/uc?id=1K6eYRxiGku7nIgbhBfd5kciaDu-X2zE1' # ProGAN_models.zip
+    logs_url = 'https://drive.google.com/uc?id=1KIoCACFmQLmUKdbH7tmymBeYM0wWgbNl' # ProGAN_logs.zip
 
-    model_files = "models.zip"
-    logs_files = "logs.zip"
+    model_file = "models.zip"
+    logs_file = "logs.zip"
 
-    # # download imgs if imgs folder does not exist
-    # if not os.path.exists(config.DATASET):
-    #     gdown.download(url, outfile, quiet=False)
+    # download models if models folder does not exist
+    if not os.path.exists(config.MODEL_PATH):
+        gdown.download(models_url, model_file, quiet=False)
 
-    #     with zipfile.ZipFile(outfile, 'r') as zip_ref:
-    #         zip_ref.extractall()
-    #     os.remove("imgs.zip")
-    #     os.rename("cybercity_imgs","imgs")
+        with zipfile.ZipFile(model_file, 'r') as zip_ref:
+            zip_ref.extractall()
+        os.remove("models.zip")
+        os.rename("ProGAN_models","models")
+
+    # download logs if models folder does not exist
+    if not os.path.exists(config.LOGS_PATH):
+        gdown.download(logs_url, logs_file, quiet=False)
+
+        with zipfile.ZipFile(logs_file, 'r') as zip_ref:
+            zip_ref.extractall()
+        os.remove("logs.zip")
+        os.rename("ProGAN_logs","logs")
 
 def generate_samples(args):
     """
