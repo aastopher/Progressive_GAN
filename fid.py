@@ -190,7 +190,7 @@ def calculate_fretchet(images_real, images_fake, model):
      mu_1,std_1 = calculate_activation_statistics(images_real, model, cuda = True) # make generic for device + add batch size and dims?
      mu_2,std_2 = calculate_activation_statistics(images_fake, model, cuda = True)
     
-     """get fretched distance"""
+     """get fretchet distance"""
      fid_value = calculate_frechet_distance(mu_1, std_1, mu_2, std_2)
      return fid_value
 
