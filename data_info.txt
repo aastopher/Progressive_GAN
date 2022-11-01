@@ -6,8 +6,10 @@ City of a Thousand Planets - Valarian
 Mega-City One - Judge Dredd
 Night City - Cyberpunk 2020
 Niihama - Ghost in the Shell
+
+# top 3
 Neo Toyko - Akira
 Tron City - Tron
 Blade Runner
 
-600 / 8 = 75
+100 * 3 = 300
