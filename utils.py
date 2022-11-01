@@ -54,7 +54,7 @@ def get_loader(image_size):
         [
             transforms.Resize(image_size),
             transforms.RandomCrop((image_size, image_size)),
-            # transforms.Resize((image_size, image_size)),
+            transforms.Resize((image_size, image_size)),
             transforms.ToTensor(),
             transforms.RandomHorizontalFlip(p=0.5),
             transforms.Normalize(
