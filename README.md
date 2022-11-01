@@ -2,6 +2,8 @@
 
 The purpose of this project is to expand knowledge of traditional GAN architectures by exploring NVIDIA's Progressive GAN research. [Progressive Growing of GANs for Improved Quality, Stability, and Variation](https://research.nvidia.com/publication/2018-04_progressive-growing-gans-improved-quality-stability-and-variation)
 
+### Install Dependencies
+* `pip install -r requirements.txt` - from project root
 
 ### Explore Tensorboard Results
 * `tensorboard --logdir logs` - to start the tensorboard and explore the current models training progress.
@@ -24,6 +26,10 @@ The purpose of this project is to expand knowledge of traditional GAN architectu
 * `python utils.py sample` - generates sample images, by default this will generate 10 images at 64x64.
 * This command can be customized to generate a chosen amount of images at a chosen size `python utils.py sample <num_images> <size_factor>`
 * Size factors: `0 = 4x4, 1 = 8x8, 2 = 16x16, 3 = 32x32, 4 = 64x64, 5 = 128x128, 6 = 256x256, 7 = 512x512, 8 = 1024x1024`
+
+### Preview Image Transforms
+* `python utils.py transform` - generates output images, by default this will output all batches at 512x512.
+* This command can be customized to generate a chosen amount of batches `python utils.py transform <num_batches>`
 
 ### References
 

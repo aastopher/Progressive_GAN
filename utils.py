@@ -1,3 +1,4 @@
+from cmath import inf
 from email.policy import default
 import torch
 import random
@@ -51,10 +52,9 @@ import pandas as pd
 def get_loader(image_size):
     transform = transforms.Compose(
         [
-            # transforms.functional.resize(size=1024),
-            transforms.Resize(1024),
-            # transforms.RandomCrop((1024, 1024)),
-            transforms.Resize((image_size, image_size)),
+            transforms.Resize(image_size),
+            transforms.RandomCrop((image_size, image_size)),
+            # transforms.Resize((image_size, image_size)),
             transforms.ToTensor(),
             transforms.RandomHorizontalFlip(p=0.5),
             transforms.Normalize(
@@ -236,12 +236,16 @@ def generate_samples(args):
             save_image(img*0.5+0.5, Path(f"{config.RESULTS}/img_{i}.png"))
     gen.train()
 
-def prev_imgs():
-    '''yields first real image batch to results folder'''
-    loader, _ = get_loader(1024)
-    data, _ = next(iter(loader))
-    for i in range(data.size(0)):
-           torchvision.utils.save_image(data[i, :, :, :]*0.5+0.5, Path(f"{config.RESULTS}/img_{i}.png"))
+def prev_imgs(args):
+    '''yields a single real image batch to results folder'''
+    loader, _ = get_loader(512)
+    loop = tqdm(loader, leave=True)
+    for batch_idx, (real, _) in enumerate(loop):
+        real = real.to(config.DEVICE)
+        for i in range(real.shape[0]):
+            torchvision.utils.save_image(real[i, :, :, :]*0.5+0.5, Path(f"{config.RESULTS}/img_{batch_idx}_{i}.png"))
+        if batch_idx == args:
+            break
 
 # CLI Driver ##
 @click.command()
@@ -268,8 +272,12 @@ def cli(args, option):
         print(f'option: {option}')
         remove_dups()
     elif option == 'transform':
+        if not args:
+            args = float('inf')
+        else:
+            args = tuple(map(int, args))[0]
         print(f'option: {option}')
-        prev_imgs()
+        prev_imgs(args)
 
 if __name__ == "__main__":
     cli()
