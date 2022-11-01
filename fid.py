@@ -1,3 +1,5 @@
+'''This module was inspired by - https://www.kaggle.com/code/ibtesama/gan-in-pytorch-with-fid'''
+
 import numpy as np
 from torch.nn.functional import adaptive_avg_pool2d
 from scipy import linalg
