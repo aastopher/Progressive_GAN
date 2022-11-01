@@ -61,7 +61,7 @@ def train_fn(critic, gen, loader, dataset, step, alpha, opt_critic, opt_gen, ten
         )
         alpha = min(alpha, 1)
 
-        fretchet_dist = fid.calculate_fretchet(real, fake, fid_model, cur_batch_size) 
+        fretchet_dist = fid.calculate_fretchet(real, fake, fid_model) 
 
         if batch_idx % 500 == 0:
             with torch.no_grad():
