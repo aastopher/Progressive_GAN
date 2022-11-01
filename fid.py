@@ -121,19 +121,15 @@ class InceptionV3(nn.Module):
                 break
 
         return outp
-    
-# block_idx = InceptionV3.BLOCK_INDEX_BY_DIM[2048]
-# model = InceptionV3([block_idx])
-# model = model.cuda()
 
-def calculate_activation_statistics(images,model,batch_size=128, dims=2048, cuda=False):
+def calculate_activation_statistics(images, model, dims=2048, cuda=False):
     model.eval()
     act = np.empty((len(images), dims))
     
     if cuda:
-        batch=images.cuda()
+        batch = images.cuda()
     else:
-        batch=images
+        batch = images
     pred = model(batch)[0]
 
         # If model output is not scalar, apply global spatial average pooling.

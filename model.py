@@ -20,7 +20,7 @@ Factors is used in Discrmininator and Generator for how much
 the channels should be multiplied and expanded for each layer,
 so specifically the first 5 layers the channels stay the same,
 whereas when we increase the img_size (towards the later layers)
-we decrease the number of chanels by 1/2, 1/4, etc.
+we decrease the number of channels by 1/2, 1/4, etc.
 """
 factors = [1, 1, 1, 1, 1 / 2, 1 / 4, 1 / 8, 1 / 16, 1 / 32]
 
