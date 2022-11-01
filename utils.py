@@ -212,8 +212,8 @@ def remove_dups():
 
 def download_models():
     '''download pre-trained models for exploration'''
-    models_url = 'https://drive.google.com/uc?id=1Jn-FOKZ6LoRkhXP3jwag_PupceV-KEvY'
-    logs_url = 'https://drive.google.com/uc?id=1Jn-FOKZ6LoRkhXP3jwag_PupceV-KEvY'
+    models_url = 'https://drive.google.com/uc?id=1K6eYRxiGku7nIgbhBfd5kciaDu-X2zE1' # ProGAN_logs.zip
+    logs_url = 'https://drive.google.com/uc?id=1KIoCACFmQLmUKdbH7tmymBeYM0wWgbNl' # ProGAN_models.zip
 
     model_files = "models.zip"
     logs_files = "logs.zip"
