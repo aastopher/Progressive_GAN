@@ -19,7 +19,7 @@ import fid
 
 torch.backends.cudnn.benchmarks = True
 
-def train_fn(critic, gen, loader, dataset, step, alpha, opt_critic, opt_gen, tensorboard_step, writer, scaler_gen, scaler_critic,img_size):
+def train_fn(critic, gen, loader, dataset, step, alpha, opt_critic, opt_gen, tensorboard_step, writer, scaler_gen, scaler_critic, fid_model, img_size):
     loop = tqdm(loader, leave=True)
     for batch_idx, (real, _) in enumerate(loop):
         real = real.to(config.DEVICE)
@@ -61,7 +61,7 @@ def train_fn(critic, gen, loader, dataset, step, alpha, opt_critic, opt_gen, ten
         )
         alpha = min(alpha, 1)
 
-        fretchet_dist = fid.calculate_fretchet(real, fake, fid.model, cur_batch_size) 
+        fretchet_dist = fid.calculate_fretchet(real, fake, fid_model, cur_batch_size) 
 
         if batch_idx % 500 == 0:
             with torch.no_grad():
@@ -103,7 +103,11 @@ def main():
         critic.parameters(), lr=config.LEARNING_RATE, betas=(0.0, 0.99)
     )
     scaler_critic = torch.cuda.amp.GradScaler()
-    scaler_gen = torch.cuda.amp.GradScaler()
+    scaler_gen = torch.cuda.amp.GradScaler()\
+
+    block_idx = fid.InceptionV3.BLOCK_INDEX_BY_DIM[2048]
+    fid_model = fid.InceptionV3([block_idx])
+    fid_model = fid_model.cuda()
 
     # for tensorboard plotting
     writer = SummaryWriter(f"logs/{time.strftime('%Y%m%d-%H%M%S')}")
@@ -118,6 +122,7 @@ def main():
         current_image_size = int(config.CURRENT_IMG_SIZE.read_text())
     else:
         current_image_size = config.START_TRAIN_AT_IMG_SIZE
+
 
     gen.train()
     critic.train()
@@ -135,7 +140,7 @@ def main():
 
         for epoch in range(num_epochs):
             print(f"Epoch [{epoch+1}/{num_epochs}]")
-            tensorboard_step, alpha = train_fn(critic, gen, loader, dataset, step, alpha, opt_critic, opt_gen, tensorboard_step, writer, scaler_gen, scaler_critic, img_size)
+            tensorboard_step, alpha = train_fn(critic, gen, loader, dataset, step, alpha, opt_critic, opt_gen, tensorboard_step, writer, scaler_gen, scaler_critic, fid_model, img_size)
 
             if config.SAVE_MODEL:
                 save_checkpoint(gen, opt_gen, filename=config.CHECKPOINT_GEN)

@@ -2,6 +2,8 @@ import numpy as np
 from torch.nn.functional import adaptive_avg_pool2d
 from scipy import linalg
 import torch.nn.functional as F
+import torch.nn as nn
+import torchvision.models as models
 
 class InceptionV3(nn.Module):
     """Pretrained InceptionV3 network returning feature maps"""
@@ -37,7 +39,9 @@ class InceptionV3(nn.Module):
         self.blocks = nn.ModuleList()
 
         
-        inception = models.inception_v3(pretrained=True)
+        inception = models.inception_v3(weights=models.Inception_V3_Weights.IMAGENET1K_V1)
+
+        
 
         # Block 0: input to maxpool1
         block0 = [
@@ -118,9 +122,9 @@ class InceptionV3(nn.Module):
 
         return outp
     
-block_idx = InceptionV3.BLOCK_INDEX_BY_DIM[2048]
-model = InceptionV3([block_idx])
-model = model.cuda()
+# block_idx = InceptionV3.BLOCK_INDEX_BY_DIM[2048]
+# model = InceptionV3([block_idx])
+# model = model.cuda()
 
 def calculate_activation_statistics(images,model,batch_size=128, dims=2048, cuda=False):
     model.eval()
