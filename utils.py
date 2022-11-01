@@ -158,8 +158,8 @@ def init():
             zip_ref.extractall()
         os.remove("imgs.zip")
         os.rename("cybercity_imgs","imgs")
-    os.mkdir(config.MODEL_PATH)
-    os.mkdir(config.LOGS_PATH)
+        os.mkdir(config.MODEL_PATH)
+        os.mkdir(config.LOGS_PATH)
 
 def remove_dups():
     '''Inspired from https://github.com/JohannesBuchner/imagehash repository'''

@@ -5,12 +5,16 @@ The purpose of this project is to expand knowledge of traditional GAN architectu
 ### Install Dependencies
 * `pip install -r requirements.txt` - from project root
 
+### Initialize the Project
+* `python utils.py init` - download the cybercity images dataset then create logs and models directories
+* As a safety pre-caution you must **REMOVE** the imgs folder this command will **NOT** overwrite an existing project files.
+
+### Download the Pre-trained models and results
+* **WARNING! This will overwrite existing models!** 
+* `python utils.py download` - download the pre-trained models and results
+
 ### Explore Tensorboard Results
 * `tensorboard --logdir logs` - to start the tensorboard and explore the current models training progress.
-
-### Download the Data
-* `python utils.py download` - download the cybercity images dataset.
-* As a safety pre-caution you must **REMOVE** the imgs folder this command will **NOT** overwrite an existing imgs folder.
 
 ### Remove Duplicate Images
 * `python utils.py removedups` - this will remove duplicate images using an image hash function.
