@@ -6,6 +6,7 @@ from scipy import linalg
 import torch.nn.functional as F
 import torch.nn as nn
 import torchvision.models as models
+import torch
 
 class InceptionV3(nn.Module):
     """Pretrained InceptionV3 network returning feature maps"""
@@ -143,6 +144,7 @@ def calculate_activation_statistics(images, model, dims=2048, cuda=False):
     
     mu = np.mean(act, axis=0)
     sigma = np.cov(act, rowvar=False)
+
     return mu, sigma
 
 def calculate_frechet_distance(mu1, sigma1, mu2, sigma2, eps=1e-6):
@@ -165,7 +167,6 @@ def calculate_frechet_distance(mu1, sigma1, mu2, sigma2, eps=1e-6):
 
     diff = mu1 - mu2
 
-    
     covmean, _ = linalg.sqrtm(sigma1.dot(sigma2), disp=False)
     if not np.isfinite(covmean).all():
         msg = ('fid calculation produces singular product; '
@@ -173,7 +174,6 @@ def calculate_frechet_distance(mu1, sigma1, mu2, sigma2, eps=1e-6):
         print(msg)
         offset = np.eye(sigma1.shape[0]) * eps
         covmean = linalg.sqrtm((sigma1 + offset).dot(sigma2 + offset))
-
     
     if np.iscomplexobj(covmean):
         if not np.allclose(np.diagonal(covmean).imag, 0, atol=1e-3):
