@@ -1,15 +1,24 @@
-Images which are representative of the structures in each fictional city.
-Searching the city name + wallpaper generally gets better results.
-
-Bay City - Altered Carbon
-City of a Thousand Planets - Valarian
-Mega-City One - Judge Dredd
-Night City - Cyberpunk 2020
-Niihama - Ghost in the Shell
-
-# top 3
 Neo Toyko - Akira
 Tron City - Tron
 Blade Runner
+Night City - Cyberpunk 2020
 
-100 * 3 = 300
+potato_model_configs
+IMG COUNT = [3008]
+EPOCHS = [30]
+Repeat = [0, 3]
+
+cyberCity_model_configs
+IMG COUNT = [200]
+EPOCHS = [30]
+Repeat = [0, 3]
+
+pokemon_model_configs
+IMG COUNT = [898]
+EPOCHS = [30]
+Repeat = [3, 0, dynamic] # dynamic = step + 1
+
+celebFaces_Model_configs
+IMG COUNT = [10000, 5000]
+EPOCHS = [10, 20]
+Repeat = [0]

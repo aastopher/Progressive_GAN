@@ -52,8 +52,8 @@ import pandas as pd
 def get_loader(image_size):
     transform = transforms.Compose(
         [
-            transforms.Resize(512),
-            transforms.RandomCrop((512, 512)),
+            # transforms.Resize(512),
+            # transforms.RandomCrop((512, 512)),
             transforms.Resize((image_size, image_size)),
             transforms.ToTensor(),
             transforms.RandomHorizontalFlip(p=0.5),
@@ -267,7 +267,7 @@ def generate_samples(args):
 
 def prev_imgs(args):
     '''yields a single real image batch to results folder'''
-    loader, _ = get_loader(512)
+    loader, _ = get_loader(128)
     loop = tqdm(loader, leave=True)
     for batch_idx, (real, _) in enumerate(loop):
         real = real.to(config.DEVICE)
