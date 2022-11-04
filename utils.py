@@ -52,8 +52,8 @@ import pandas as pd
 def get_loader(image_size):
     transform = transforms.Compose(
         [
-            # transforms.Resize(512),
-            # transforms.RandomCrop((512, 512)),
+            transforms.Resize(512),
+            transforms.RandomCrop((512, 512)),
             transforms.Resize((image_size, image_size)),
             transforms.ToTensor(),
             transforms.RandomHorizontalFlip(p=0.5),

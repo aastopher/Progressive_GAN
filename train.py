@@ -23,7 +23,7 @@ torch.backends.cudnn.benchmarks = True
 def train_fn(critic, gen, loader, dataset, step, alpha, opt_critic, opt_gen, tensorboard_step, writer, scaler_gen, scaler_critic, fid, img_size):
     loop = tqdm(loader, leave=True)
     for batch_idx, (real, _) in enumerate(loop):
-        for _ in range(1):
+        for _ in range(config.BATCH_REPEAT):
             real = real.to(config.DEVICE)
             cur_batch_size = real.shape[0]
 
