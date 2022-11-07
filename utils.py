@@ -19,35 +19,10 @@ import imagehash
 from PIL import Image
 import torchvision.datasets as datasets
 import torchvision.transforms as transforms
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, SubsetRandomSampler
 from math import log2
 from tqdm import tqdm
 import pandas as pd
-
-# def get_loader(image_size):
-#     transform = transforms.Compose(
-#         [
-#             transforms.Resize((image_size, image_size)),
-#             transforms.ToTensor(),
-#             transforms.RandomHorizontalFlip(p=0.5),
-#             transforms.Normalize(
-#                 [0.5 for _ in range(config.CHANNELS_IMG)],
-#                 [0.5 for _ in range(config.CHANNELS_IMG)],
-#             ),
-#         ]
-#     )
-
-#     batch_size = config.BATCH_SIZES[int(log2(image_size / 4))]
-#     dataset = datasets.ImageFolder(root=config.DATASET, transform=transform)
-#     loader = DataLoader(
-#         dataset,
-#         batch_size=batch_size,
-#         shuffle=True,
-#         num_workers=config.NUM_WORKERS,
-#         pin_memory=True,
-#     )
-    
-#     return loader, dataset
 
 def get_loader(image_size):
     transform = transforms.Compose(
@@ -66,12 +41,19 @@ def get_loader(image_size):
 
     batch_size = config.BATCH_SIZES[int(log2(image_size / 4))]
     dataset = datasets.ImageFolder(root=config.DATASET, transform=transform)
+    
+    # init list in range of the min between config.SAMPLE_SIZE and len(dataset)
+    dataset_indices = list(range(min(config.SAMPLE_SIZE, len(dataset))))
+    np.random.shuffle(dataset_indices) # shuffle indices 
+    sample = SubsetRandomSampler(dataset_indices) # init sampler
+
     loader = DataLoader(
         dataset,
         batch_size=batch_size,
-        shuffle=True,
+        shuffle=False,
         num_workers=config.NUM_WORKERS,
         pin_memory=True,
+        sampler=sample,
     )
     
     return loader, dataset

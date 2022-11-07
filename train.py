@@ -141,8 +141,8 @@ def main():
                 save_checkpoint(critic, opt_critic, filename=config.CHECKPOINT_CRITIC)
 
         fretchet_dist = fid.calculate_fretchet(real, fake, fid_model)
-        step += 1  # progress to the next img size
-
+        step += 1  # progress to the next img size 
+    writer.add_scalar("FID", fretchet_dist, global_step=tensorboard_step) # add FID for end of training
 
 if __name__ == "__main__":
     main()

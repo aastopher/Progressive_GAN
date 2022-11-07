@@ -22,3 +22,8 @@ celebFaces_Model_configs
 IMG COUNT = [10000, 5000]
 EPOCHS = [10, 20]
 Repeat = [0]
+
+Car_Model_configs
+IMG COUNT = [10000]
+EPOCHS = [30]
+Repeat = [0]
