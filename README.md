@@ -1,4 +1,4 @@
-# ProGAN (Progressive Generative Adversarial Network) Trained on various image datasets
+# ProGAN (Progressive Generative Adversarial Network) trained on various image datasets
 
 The purpose of this project is to expand knowledge of traditional GAN architectures by exploring NVIDIA's Progressive GAN research. [Progressive Growing of GANs for Improved Quality, Stability, and Variation](https://research.nvidia.com/publication/2018-04_progressive-growing-gans-improved-quality-stability-and-variation)
 
