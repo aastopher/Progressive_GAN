@@ -25,10 +25,27 @@ from tqdm import tqdm
 import pandas as pd
 
 def get_loader(image_size):
+    # transform = transforms.Compose(
+    #     [
+    #         # transforms.Resize(512),
+    #         # transforms.RandomCrop((512, 512)),
+    #         transforms.Resize((image_size, image_size)),
+    #         transforms.ToTensor(),
+    #         transforms.RandomHorizontalFlip(p=0.5),
+    #         transforms.Normalize(
+    #             [0.5 for _ in range(config.CHANNELS_IMG)],
+    #             [0.5 for _ in range(config.CHANNELS_IMG)],
+    #         ),
+    #     ]
+    # )
+
     transform = transforms.Compose(
         [
-            # transforms.Resize(512),
-            # transforms.RandomCrop((512, 512)),
+            transforms.Resize(512),
+            transforms.RandomCrop((512, 512)),
+            transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=(0.1, 0.4), hue=(-0.5, 0.5)),
+            transforms.RandomAffine(degrees=(0, 60), scale=(0.75, 1)),
+            transforms.CenterCrop(256),
             transforms.Resize((image_size, image_size)),
             transforms.ToTensor(),
             transforms.RandomHorizontalFlip(p=0.5),
@@ -130,19 +147,32 @@ def seed_everything(seed=42):
 #### CLI Functions ####
 def init():
     '''download dataset then create models and logs directories'''
-    url = 'https://drive.google.com/uc?id=1Jn-FOKZ6LoRkhXP3jwag_PupceV-KEvY'
-    outfile = "imgs.zip"
+    # url = 'https://drive.google.com/uc?id=1Jn-FOKZ6LoRkhXP3jwag_PupceV-KEvY'
+    # outfile = "imgs.zip"
+    log_url = 'https://drive.google.com/uc?id=1KIoCACFmQLmUKdbH7tmymBeYM0wWgbNl'
+    outfile = "logs.zip"
 
     # download imgs if imgs folder does not exist
-    if not os.path.exists(config.DATASET):
-        gdown.download(url, outfile, quiet=False)
+    if not os.path.exists(config.LOGS_PATH):
+        gdown.download(log_url, outfile, quiet=False)
 
         with zipfile.ZipFile(outfile, 'r') as zip_ref:
             zip_ref.extractall()
-        os.remove("imgs.zip")
-        os.rename("cybercity_imgs","imgs")
-        os.mkdir(config.MODEL_PATH)
-        os.mkdir(config.LOGS_PATH)
+            os.remove("logs.zip")
+            os.rename("ProGAN_logs","logs")
+            os.mkdir(config.MODEL_PATH)
+            os.mkdir(config.RESULTS)
+
+    # # download imgs if imgs folder does not exist
+    # if not os.path.exists(config.DATASET):
+    #     gdown.download(url, outfile, quiet=False)
+
+    #     with zipfile.ZipFile(outfile, 'r') as zip_ref:
+    #         zip_ref.extractall()
+    #     os.remove("imgs.zip")
+    #     os.rename("cybercity_imgs","imgs")
+    #     os.mkdir(config.MODEL_PATH)
+    #     os.mkdir(config.LOGS_PATH)
 
 def remove_dups():
     '''Inspired from https://github.com/JohannesBuchner/imagehash repository'''
@@ -193,13 +223,37 @@ def remove_dups():
         print(Path(f"{config.DATASET}/imgs/{second}"))
     
 
-def download_models():
+def download_models(args):
     '''download pre-trained models for exploration''' 
-    models_url = 'https://drive.google.com/uc?id=1K6eYRxiGku7nIgbhBfd5kciaDu-X2zE1' # ProGAN_models.zip
-    logs_url = 'https://drive.google.com/uc?id=1KIoCACFmQLmUKdbH7tmymBeYM0wWgbNl' # ProGAN_logs.zip
+
+    if args == 'cars':
+        models_url = 'https://drive.google.com/uc?id=1K6eYRxiGku7nIgbhBfd5kciaDu-X2zE1' # ProGAN_Cars.zip - URL NEEDED
+        imgs_url = 'https://drive.google.com/uc?id=1KIoCACFmQLmUKdbH7tmymBeYM0wWgbNl' # car_imgs.zip - URL NEEDED
+        img_name = 'car_imgs'
+        model_name = 'ProGAN_Cars'
+    elif args == 'cyber':
+        models_url = 'https://drive.google.com/uc?id=1K6eYRxiGku7nIgbhBfd5kciaDu-X2zE1' # ProGAN_Cyber.zip - URL NEEDED
+        imgs_url = 'https://drive.google.com/uc?id=1Jn-FOKZ6LoRkhXP3jwag_PupceV-KEvY' # cybercity_imgs.zip
+        img_name = 'cybercity_imgs'
+        model_name = 'ProGAN_Cyber'
+    elif args == 'dogs':
+        models_url = 'https://drive.google.com/uc?id=1K6eYRxiGku7nIgbhBfd5kciaDu-X2zE1' # ProGAN_Dogs.zip - URL NEEDED
+        imgs_url = 'https://drive.google.com/uc?id=1KIoCACFmQLmUKdbH7tmymBeYM0wWgbNl' # dog_imgs.zip - URL NEEDED
+        img_name = 'dog_imgs'
+        model_name = 'ProGAN_Dogs'
+    elif args == 'faces':
+        models_url = 'https://drive.google.com/uc?id=1K6eYRxiGku7nIgbhBfd5kciaDu-X2zE1' # ProGAN_Faces.zip - URL NEEDED
+        imgs_url = 'https://drive.google.com/uc?id=1KIoCACFmQLmUKdbH7tmymBeYM0wWgbNl' # face_imgs.zip - URL NEEDED
+        img_name = 'face_imgs'
+        model_name = 'ProGAN_Faces'
+    elif args == 'potato':
+        models_url = 'https://drive.google.com/uc?id=1K6eYRxiGku7nIgbhBfd5kciaDu-X2zE1' # ProGAN_Potato.zip - URL NEEDED
+        imgs_url = 'https://drive.google.com/uc?id=1A423Vi62SWb3FHtwieXDlmtIEcQHb2ub' # imgs.zip
+        img_name = 'imgs'
+        model_name = 'ProGAN_Potato'
 
     model_file = "models.zip"
-    logs_file = "logs.zip"
+    imgs_file = "imgs.zip"
 
     # download models if models folder does not exist
     if not os.path.exists(config.MODEL_PATH):
@@ -208,16 +262,16 @@ def download_models():
         with zipfile.ZipFile(model_file, 'r') as zip_ref:
             zip_ref.extractall()
         os.remove("models.zip")
-        os.rename("ProGAN_models","models")
+        os.rename(model_name,"models")
 
     # download logs if models folder does not exist
-    if not os.path.exists(config.LOGS_PATH):
-        gdown.download(logs_url, logs_file, quiet=False)
+    if not os.path.exists(config.DATASET):
+        gdown.download(imgs_url, imgs_file, quiet=False)
 
-        with zipfile.ZipFile(logs_file, 'r') as zip_ref:
+        with zipfile.ZipFile(imgs_file, 'r') as zip_ref:
             zip_ref.extractall()
         os.remove("logs.zip")
-        os.rename("ProGAN_logs","logs")
+        os.rename(img_name, "logs")
 
 def generate_samples(args):
     """
@@ -247,10 +301,14 @@ def generate_samples(args):
             save_image(img*0.5+0.5, Path(f"{config.RESULTS}/img_{i}.png"))
     gen.train()
 
-def prev_imgs(args):
+def apply_transform(args):
     '''yields a single real image batch to results folder'''
+    if not os.path.exists(config.RESULTS): # check if results folder exists
+        os.makedirs(config.RESULTS) # create results folder if does not exist
+
     loader, _ = get_loader(128)
     loop = tqdm(loader, leave=True)
+
     for batch_idx, (real, _) in enumerate(loop):
         real = real.to(config.DEVICE)
         for i in range(real.shape[0]):
@@ -280,8 +338,14 @@ def cli(args, option):
         print(f'sample: {args}')
         generate_samples(args)
     elif option == 'download':
+        if not args:
+            args = -1
+        elif isinstance(args, str):
+            args = args.lower().strip()
+        else:
+            print('not a valid arg')
         print(f'option: {option}')
-        download_models()
+        download_models(args)
     elif option == 'removedups':
         print(f'option: {option}')
         remove_dups()
@@ -291,7 +355,7 @@ def cli(args, option):
         else:
             args = tuple(map(int, args))[0]
         print(f'option: {option}')
-        prev_imgs(args)
+        apply_transform(args)
 
 if __name__ == "__main__":
     cli()
