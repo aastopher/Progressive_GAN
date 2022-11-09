@@ -146,13 +146,11 @@ def seed_everything(seed=42):
 
 #### CLI Functions ####
 def init():
-    '''download dataset then create models and logs directories'''
-    # url = 'https://drive.google.com/uc?id=1Jn-FOKZ6LoRkhXP3jwag_PupceV-KEvY'
-    # outfile = "imgs.zip"
+    '''download logs for exploration then init empty models and results directory'''
     log_url = 'https://drive.google.com/uc?id=1KIoCACFmQLmUKdbH7tmymBeYM0wWgbNl'
     outfile = "logs.zip"
 
-    # download imgs if imgs folder does not exist
+    # download logs if logs folder does not exist
     if not os.path.exists(config.LOGS_PATH):
         gdown.download(log_url, outfile, quiet=False)
 
@@ -162,17 +160,6 @@ def init():
             os.rename("ProGAN_logs","logs")
             os.mkdir(config.MODEL_PATH)
             os.mkdir(config.RESULTS)
-
-    # # download imgs if imgs folder does not exist
-    # if not os.path.exists(config.DATASET):
-    #     gdown.download(url, outfile, quiet=False)
-
-    #     with zipfile.ZipFile(outfile, 'r') as zip_ref:
-    #         zip_ref.extractall()
-    #     os.remove("imgs.zip")
-    #     os.rename("cybercity_imgs","imgs")
-    #     os.mkdir(config.MODEL_PATH)
-    #     os.mkdir(config.LOGS_PATH)
 
 def remove_dups():
     '''Inspired from https://github.com/JohannesBuchner/imagehash repository'''
@@ -224,8 +211,8 @@ def remove_dups():
     
 
 def download_models(args):
-    '''download pre-trained models for exploration''' 
-
+    '''download pre-trained models and images for various models''' 
+    
     if args == 'cars':
         models_url = 'https://drive.google.com/uc?id=1K6eYRxiGku7nIgbhBfd5kciaDu-X2zE1' # ProGAN_Cars.zip - URL NEEDED
         imgs_url = 'https://drive.google.com/uc?id=1KIoCACFmQLmUKdbH7tmymBeYM0wWgbNl' # car_imgs.zip - URL NEEDED
@@ -339,11 +326,11 @@ def cli(args, option):
         generate_samples(args)
     elif option == 'download':
         if not args:
-            args = -1
+            args = 'faces'
         elif isinstance(args, str):
             args = args.lower().strip()
         else:
-            print('not a valid arg')
+            print('please provide a valid option [cars, cyber, dogs, faces, potatoes]')
         print(f'option: {option}')
         download_models(args)
     elif option == 'removedups':
