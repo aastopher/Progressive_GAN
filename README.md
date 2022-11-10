@@ -12,7 +12,7 @@ The purpose of this project is to expand knowledge of traditional GAN architectu
 ### Download the Pre-trained models and results
 * `python utils.py download` - download the pre-trained model files and image sets.
 * Options = `[cars, cyber, dogs, faces, potatoes]`; default = `faces`
-* This command will NOT override existing models you must delete both `imgs` and `models` folders to download the image and model sets
+* This command will NOT override existing models you must delete both `imgs` and `models` folders to download a new image and model set
 
 ### Explore Tensorboard Results
 * `tensorboard --logdir logs` - to start the tensorboard and explore the current models training progress.

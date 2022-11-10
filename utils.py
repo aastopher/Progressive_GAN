@@ -214,27 +214,27 @@ def download_models(args):
     '''download pre-trained models and images for various models''' 
     
     if args == 'cars':
-        models_url = 'https://drive.google.com/uc?id=1K6eYRxiGku7nIgbhBfd5kciaDu-X2zE1' # ProGAN_Cars.zip - URL NEEDED
-        imgs_url = 'https://drive.google.com/uc?id=1KIoCACFmQLmUKdbH7tmymBeYM0wWgbNl' # car_imgs.zip - URL NEEDED
+        models_url = 'https://drive.google.com/uc?id=1-2pczU0Vsx61ru6aYJuwaV-By4Mdqarj' # ProGAN_Cars.zip
+        imgs_url = 'https://drive.google.com/uc?id=1l0liZMZV3PGDonJS8FcNq_-5W9oiVP9B' # car_imgs.zip
         img_name = 'car_imgs'
         model_name = 'ProGAN_Cars'
     elif args == 'cyber':
-        models_url = 'https://drive.google.com/uc?id=1K6eYRxiGku7nIgbhBfd5kciaDu-X2zE1' # ProGAN_Cyber.zip - URL NEEDED
+        models_url = 'https://drive.google.com/uc?id=1-3tulOzgzpLCg-6cSwkJI4xkQV5mt-Lw' # ProGAN_Cyber.zip
         imgs_url = 'https://drive.google.com/uc?id=1Jn-FOKZ6LoRkhXP3jwag_PupceV-KEvY' # cybercity_imgs.zip
         img_name = 'cybercity_imgs'
         model_name = 'ProGAN_Cyber'
     elif args == 'dogs':
-        models_url = 'https://drive.google.com/uc?id=1K6eYRxiGku7nIgbhBfd5kciaDu-X2zE1' # ProGAN_Dogs.zip - URL NEEDED
-        imgs_url = 'https://drive.google.com/uc?id=1KIoCACFmQLmUKdbH7tmymBeYM0wWgbNl' # dog_imgs.zip - URL NEEDED
+        models_url = 'https://drive.google.com/uc?id=1-5VmBrlX8psMQhDyoMvTe_tLVUPSvAbe' # ProGAN_Dogs.zip
+        imgs_url = 'https://drive.google.com/uc?id=1XMvtTtC6HLxjb3PGIeqQwWvQUHDcLqta' # dog_imgs.zip
         img_name = 'dog_imgs'
         model_name = 'ProGAN_Dogs'
     elif args == 'faces':
-        models_url = 'https://drive.google.com/uc?id=1K6eYRxiGku7nIgbhBfd5kciaDu-X2zE1' # ProGAN_Faces.zip - URL NEEDED
-        imgs_url = 'https://drive.google.com/uc?id=1KIoCACFmQLmUKdbH7tmymBeYM0wWgbNl' # face_imgs.zip - URL NEEDED
+        models_url = 'https://drive.google.com/uc?id=1-7c9ro6Adfuy1T9gLpfmx1JRM2ARrEdA' # ProGAN_Faces.zip
+        imgs_url = 'https://drive.google.com/uc?id=1-1bngZsB4n8_eXi94dSA2IiUNgpCijF_' # face_imgs.zip
         img_name = 'face_imgs'
         model_name = 'ProGAN_Faces'
     elif args == 'potato':
-        models_url = 'https://drive.google.com/uc?id=1K6eYRxiGku7nIgbhBfd5kciaDu-X2zE1' # ProGAN_Potato.zip - URL NEEDED
+        models_url = 'https://drive.google.com/uc?id=1-BOOZAnZ6ecQPkHdndojjNglAqZtPZBW' # ProGAN_Potato.zip
         imgs_url = 'https://drive.google.com/uc?id=1A423Vi62SWb3FHtwieXDlmtIEcQHb2ub' # imgs.zip
         img_name = 'imgs'
         model_name = 'ProGAN_Potato'
