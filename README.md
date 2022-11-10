@@ -17,11 +17,6 @@ The purpose of this project is to expand knowledge of traditional GAN architectu
 ### Explore Tensorboard Results
 * `tensorboard --logdir logs` - to start the tensorboard and explore the current models training progress.
 
-### Remove Duplicate Images
-* `python utils.py removedups` - this will remove duplicate images using an image hash function.
-* The `hash_size` for this function can be customized to have a looser hash criteria i.e accepting a larger difference between "duplicates"
-* This function will output how many duplicates have been removed and a path list for all duplicate images. **NOTE:** paths are not paired with duplicates.
-
 ### Train the model
 * **WARNING! This can overwrite existing models!** 
 * `python train.py` - continue training or re-train model.
@@ -35,6 +30,12 @@ The purpose of this project is to expand knowledge of traditional GAN architectu
 ### Preview Image Transforms
 * `python utils.py transform` - generates output images, by default this will output all batches at 512x512.
 * This command can be customized to generate a chosen amount of batches `python utils.py transform <num_batches>`
+
+### Remove Duplicate Images
+* `python utils.py removedups` - remove duplicate images in the imgs folder using an image hash function.
+* This utility is designed to for cleaning custom image datasets of duplicate images
+* The `hash_size` for this function can be customized to have a looser hash criteria i.e accepting a larger difference between "duplicates"
+* This function will output how many duplicates have been removed and a path list for all duplicate images. **NOTE:** paths are not paired with duplicates.
 
 ### References
 
