@@ -147,7 +147,7 @@ def seed_everything(seed=42):
 #### CLI Functions ####
 def init():
     '''download logs for exploration then init empty models and results directory'''
-    log_url = 'https://drive.google.com/uc?id=1KIoCACFmQLmUKdbH7tmymBeYM0wWgbNl'
+    log_url = 'https://drive.google.com/uc?id=1-GbQp4cXmqVslMxBbirJEwf2SgWEDZlb'
     outfile = "logs.zip"
 
     # download logs if logs folder does not exist
@@ -220,7 +220,7 @@ def download_models(args):
         img_name = 'car_imgs'
         model_name = 'ProGAN_Cars'
     elif args == 'cyber':
-        models_url = 'https://drive.google.com/uc?id=1-3tulOzgzpLCg-6cSwkJI4xkQV5mt-Lw' # ProGAN_Cyber.zip
+        models_url = 'https://drive.google.com/uc?id=1-C5Up7hPiB9F0KJ1FeqteKMnkhHZGa1Z' # ProGAN_Cyber.zip
         imgs_url = 'https://drive.google.com/uc?id=1-BPlYeT0WKXeM1I8NuGSqL84iwZdAuf2' # cybercity_imgs.zip
         img_name = 'cybercity_imgs'
         model_name = 'ProGAN_Cyber'
@@ -327,7 +327,7 @@ def cli(args, option):
         generate_samples(args)
     elif option == 'download':
         if not args:
-            args = ('faces',)
+            args = ('cyber',)
         elif isinstance(args, str):
             args = args.lower().strip()
         else:
