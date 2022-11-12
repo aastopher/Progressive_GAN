@@ -23,6 +23,7 @@ from torch.utils.data import DataLoader, SubsetRandomSampler
 from math import log2
 from tqdm import tqdm
 import pandas as pd
+import asyncio
 
 def get_loader(image_size):
     # transform = transforms.Compose(
@@ -43,12 +44,12 @@ def get_loader(image_size):
         [
             transforms.Resize(512),
             transforms.RandomCrop((512, 512)),
-            transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=(0.1, 0.4), hue=(-0.5, 0.5)),
+            transforms.ColorJitter(brightness=(0.75, 1), contrast=(0.75, 1), saturation=(0.1, 0.4), hue=(-0.5, 0.5)),
             transforms.RandomAffine(degrees=(0, 60), scale=(0.75, 1)),
             transforms.CenterCrop(256),
             transforms.Resize((image_size, image_size)),
+            transforms.CenterCrop(image_size),
             transforms.ToTensor(),
-            transforms.RandomHorizontalFlip(p=0.5),
             transforms.Normalize(
                 [0.5 for _ in range(config.CHANNELS_IMG)],
                 [0.5 for _ in range(config.CHANNELS_IMG)],
@@ -145,7 +146,10 @@ def seed_everything(seed=42):
     torch.backends.cudnn.benchmark = False
 
 #### CLI Functions ####
-def init():
+async def unzip(zip_ref):
+    zip_ref.extractall()
+
+async def init():
     '''download logs for exploration then init empty models and results directory'''
     log_url = 'https://drive.google.com/uc?id=1KIoCACFmQLmUKdbH7tmymBeYM0wWgbNl'
     outfile = "logs.zip"
@@ -155,7 +159,7 @@ def init():
         gdown.download(log_url, outfile, quiet=False)
 
         with zipfile.ZipFile(outfile, 'r') as zip_ref:
-            zip_ref.extractall()
+            await unzip(zip_ref)
             os.remove("logs.zip")
             os.rename("ProGAN_logs","logs")
             os.mkdir(config.MODEL_PATH)
@@ -205,9 +209,9 @@ def remove_dups():
         os.remove(Path(f"{config.DATASET}/imgs/{dup}"))
 
     # show duplicate image paths
-    for first, second in list(zip(first_dup_list, second_dup_list)):
-        print(Path(f"{config.DATASET}/imgs/{first}"))
-        print(Path(f"{config.DATASET}/imgs/{second}"))
+    # for first, second in list(zip(first_dup_list, second_dup_list)):
+    #     print(Path(f"{config.DATASET}/imgs/{first}"))
+    #     print(Path(f"{config.DATASET}/imgs/{second}"))
     
 
 def download_models(args):
@@ -316,10 +320,10 @@ def cli(args, option):
         print(f'invalid option: {option}')
     elif option == 'init':
         print(f'option: {option}')
-        init()
+        asyncio.run(init())
     elif option == 'sample':
         if not args:
-            args = (10,4)
+            args = (10,5)
         else:
             args = tuple(map(int, args))
         print(f'sample: {args}')
