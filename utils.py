@@ -23,7 +23,6 @@ from torch.utils.data import DataLoader, SubsetRandomSampler
 from math import log2
 from tqdm import tqdm
 import pandas as pd
-import asyncio
 
 def get_loader(image_size):
     # transform = transforms.Compose(
@@ -44,12 +43,12 @@ def get_loader(image_size):
         [
             transforms.Resize(512),
             transforms.RandomCrop((512, 512)),
-            transforms.ColorJitter(brightness=(0.75, 1), contrast=(0.75, 1), saturation=(0.1, 0.4), hue=(-0.5, 0.5)),
+            transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=(0.1, 0.4), hue=(-0.5, 0.5)),
             transforms.RandomAffine(degrees=(0, 60), scale=(0.75, 1)),
             transforms.CenterCrop(256),
             transforms.Resize((image_size, image_size)),
-            transforms.CenterCrop(image_size),
             transforms.ToTensor(),
+            transforms.RandomHorizontalFlip(p=0.5),
             transforms.Normalize(
                 [0.5 for _ in range(config.CHANNELS_IMG)],
                 [0.5 for _ in range(config.CHANNELS_IMG)],
@@ -146,10 +145,7 @@ def seed_everything(seed=42):
     torch.backends.cudnn.benchmark = False
 
 #### CLI Functions ####
-async def unzip(zip_ref):
-    zip_ref.extractall()
-
-async def init():
+def init():
     '''download logs for exploration then init empty models and results directory'''
     log_url = 'https://drive.google.com/uc?id=1KIoCACFmQLmUKdbH7tmymBeYM0wWgbNl'
     outfile = "logs.zip"
@@ -159,11 +155,12 @@ async def init():
         gdown.download(log_url, outfile, quiet=False)
 
         with zipfile.ZipFile(outfile, 'r') as zip_ref:
-            await unzip(zip_ref)
-            os.remove("logs.zip")
-            os.rename("ProGAN_logs","logs")
-            os.mkdir(config.MODEL_PATH)
-            os.mkdir(config.RESULTS)
+            zip_ref.extractall()
+
+        os.rename("ProGAN_logs","logs")
+        os.mkdir(config.MODEL_PATH)
+        os.mkdir(config.RESULTS)
+        os.remove("logs.zip")
 
 def remove_dups():
     '''Inspired from https://github.com/JohannesBuchner/imagehash repository'''
@@ -209,14 +206,14 @@ def remove_dups():
         os.remove(Path(f"{config.DATASET}/imgs/{dup}"))
 
     # show duplicate image paths
-    # for first, second in list(zip(first_dup_list, second_dup_list)):
-    #     print(Path(f"{config.DATASET}/imgs/{first}"))
-    #     print(Path(f"{config.DATASET}/imgs/{second}"))
+    for first, second in list(zip(first_dup_list, second_dup_list)):
+        print(Path(f"{config.DATASET}/imgs/{first}"))
+        print(Path(f"{config.DATASET}/imgs/{second}"))
     
 
 def download_models(args):
     '''download pre-trained models and images for various models''' 
-    
+
     if args == 'cars':
         models_url = 'https://drive.google.com/uc?id=1-2pczU0Vsx61ru6aYJuwaV-By4Mdqarj' # ProGAN_Cars.zip
         imgs_url = 'https://drive.google.com/uc?id=1l0liZMZV3PGDonJS8FcNq_-5W9oiVP9B' # car_imgs.zip
@@ -224,7 +221,7 @@ def download_models(args):
         model_name = 'ProGAN_Cars'
     elif args == 'cyber':
         models_url = 'https://drive.google.com/uc?id=1-3tulOzgzpLCg-6cSwkJI4xkQV5mt-Lw' # ProGAN_Cyber.zip
-        imgs_url = 'https://drive.google.com/uc?id=1Jn-FOKZ6LoRkhXP3jwag_PupceV-KEvY' # cybercity_imgs.zip
+        imgs_url = 'https://drive.google.com/uc?id=1-BPlYeT0WKXeM1I8NuGSqL84iwZdAuf2' # cybercity_imgs.zip
         img_name = 'cybercity_imgs'
         model_name = 'ProGAN_Cyber'
     elif args == 'dogs':
@@ -252,8 +249,8 @@ def download_models(args):
 
         with zipfile.ZipFile(model_file, 'r') as zip_ref:
             zip_ref.extractall()
-        os.remove("models.zip")
         os.rename(model_name,"models")
+        os.remove(model_file)
 
     # download logs if models folder does not exist
     if not os.path.exists(config.DATASET):
@@ -261,8 +258,8 @@ def download_models(args):
 
         with zipfile.ZipFile(imgs_file, 'r') as zip_ref:
             zip_ref.extractall()
-        os.remove("logs.zip")
-        os.rename(img_name, "logs")
+        os.rename(img_name, "imgs")
+        os.remove(imgs_file)
 
 def generate_samples(args):
     """
@@ -320,23 +317,23 @@ def cli(args, option):
         print(f'invalid option: {option}')
     elif option == 'init':
         print(f'option: {option}')
-        asyncio.run(init())
+        init()
     elif option == 'sample':
         if not args:
-            args = (10,5)
+            args = (10,4)
         else:
             args = tuple(map(int, args))
         print(f'sample: {args}')
         generate_samples(args)
     elif option == 'download':
         if not args:
-            args = 'faces'
+            args = ('faces',)
         elif isinstance(args, str):
             args = args.lower().strip()
         else:
             print('please provide a valid option [cars, cyber, dogs, faces, potatoes]')
         print(f'option: {option}')
-        download_models(args)
+        download_models(args[0])
     elif option == 'removedups':
         print(f'option: {option}')
         remove_dups()
