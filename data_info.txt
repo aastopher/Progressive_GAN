@@ -9,9 +9,9 @@ EPOCHS = [30]
 Repeat = [0, 3]
 
 cyberCity_model_configs
-IMG COUNT = [200]
-EPOCHS = [30]
-Repeat = [0, 3]
+IMG COUNT = [2046]
+EPOCHS = [195, 195, 195, 390, 390, 780] # 2046 * 3
+Repeat = [0]
 
 pokemon_model_configs
 IMG COUNT = [898]
