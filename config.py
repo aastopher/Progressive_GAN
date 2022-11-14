@@ -27,7 +27,6 @@ BATCH_REPEAT = 1 # number of times critic, critiques the batch
 CHANNELS_IMG = 3
 Z_DIM = 256  # 512 in original paper, 256 reduces vram usage
 IN_CHANNELS = 256  # 512 in original paper, 256 reduces vram usage
-# CRITIC_ITERATIONS = 1
 LAMBDA_GP = 10
 # PROGRESSIVE_EPOCHS = [195, 195, 195, 390, 390, 780] # 2046 * 3 
 PROGRESSIVE_EPOCHS = [0, 0, 0, 0, 0, 334] # total steps should be 2145 but power went out so we need to run exactly 334 to hit 2145 from 1811; 1811 + 334 = 2145
