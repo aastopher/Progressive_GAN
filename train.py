@@ -91,9 +91,10 @@ def train_fn(critic, gen, loader, dataset, step, alpha, opt_critic, opt_gen, ten
 
 
 def main():
+    '''driver function for training'''
+
     # initialize gen and disc, note: discriminator should be called critic,
     # according to WGAN paper (since it no longer outputs between [0, 1])
-    # but really who cares..
     gen = Generator(config.Z_DIM, config.IN_CHANNELS, img_channels=config.CHANNELS_IMG).to(config.DEVICE)
     critic = Discriminator(config.Z_DIM, config.IN_CHANNELS, img_channels=config.CHANNELS_IMG).to(config.DEVICE)
 
