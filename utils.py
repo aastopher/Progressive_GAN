@@ -135,7 +135,9 @@ def seed_everything(seed=42):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
+#######################
 #### CLI Functions ####
+#######################
 def init():
     '''download logs for exploration then init empty models and results directory'''
     log_url = 'https://drive.google.com/uc?id=1-GbQp4cXmqVslMxBbirJEwf2SgWEDZlb'
