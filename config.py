@@ -31,4 +31,4 @@ LAMBDA_GP = 10
 # PROGRESSIVE_EPOCHS = [195, 195, 195, 390, 390, 780] # 2046 * 3 
 PROGRESSIVE_EPOCHS = [0, 0, 0, 0, 0, 334] # total steps should be 2145 but power went out so we need to run exactly 334 to hit 2145 from 1811; 1811 + 334 = 2145
 FIXED_NOISE = torch.randn(8, Z_DIM, 1, 1).to(DEVICE)
-NUM_WORKERS = 4
+NUM_WORKERS = 4 # how many sub-processes to use for data loading
