@@ -25,20 +25,8 @@ from tqdm import tqdm
 import pandas as pd
 
 def get_loader(image_size):
-    # transform = transforms.Compose(
-    #     [
-    #         # transforms.Resize(512),
-    #         # transforms.RandomCrop((512, 512)),
-    #         transforms.Resize((image_size, image_size)),
-    #         transforms.ToTensor(),
-    #         transforms.RandomHorizontalFlip(p=0.5),
-    #         transforms.Normalize(
-    #             [0.5 for _ in range(config.CHANNELS_IMG)],
-    #             [0.5 for _ in range(config.CHANNELS_IMG)],
-    #         ),
-    #     ]
-    # )
-
+    '''get loader at specified image size'''
+    # transform specific to cyber image dataset
     transform = transforms.Compose(
         [
             transforms.Resize(512),
@@ -56,6 +44,7 @@ def get_loader(image_size):
         ]
     )
 
+    # init batch size and dataset object
     batch_size = config.BATCH_SIZES[int(log2(image_size / 4))]
     dataset = datasets.ImageFolder(root=config.DATASET, transform=transform)
     
@@ -64,6 +53,7 @@ def get_loader(image_size):
     np.random.shuffle(dataset_indices) # shuffle indices 
     sample = SubsetRandomSampler(dataset_indices) # init sampler
 
+    # init loader
     loader = DataLoader(
         dataset,
         batch_size=batch_size,
@@ -75,8 +65,8 @@ def get_loader(image_size):
     
     return loader, dataset
 
-# Print losses occasionally and print to tensorboard
 def plot_to_tensorboard(writer, loss_critic, loss_gen, fid, real, fake, img_size, tensorboard_step):
+    '''print losses to tensorboard'''
     writer.add_scalar("Loss Critic", loss_critic, global_step=tensorboard_step)
     writer.add_scalar("Loss Generator", loss_gen, global_step=tensorboard_step)
     writer.add_scalar("FID", fid, global_step=tensorboard_step)
@@ -91,6 +81,7 @@ def plot_to_tensorboard(writer, loss_critic, loss_gen, fid, real, fake, img_size
 
 
 def gradient_penalty(critic, real, fake, alpha, train_step, device="cpu"):
+    '''compute gradient penalty'''
     BATCH_SIZE, C, H, W = real.shape
     beta = torch.rand((BATCH_SIZE, 1, 1, 1)).repeat(1, C, H, W).to(device)
     interpolated_images = real * beta + fake.detach() * (1 - beta)
@@ -114,15 +105,15 @@ def gradient_penalty(critic, real, fake, alpha, train_step, device="cpu"):
 
 
 def save_checkpoint(model, optimizer, filename="my_checkpoint.pth.tar"):
+    '''save model checkpoint'''
     print("=> Saving checkpoint")
-    checkpoint = {
-        "state_dict": model.state_dict(),
-        "optimizer": optimizer.state_dict(),
-    }
+    checkpoint = {"state_dict": model.state_dict(),
+                  "optimizer": optimizer.state_dict()}
     torch.save(checkpoint, filename)
 
 
 def load_checkpoint(checkpoint_file, model, optimizer, lr):
+    '''load model checkpoint'''
     print("=> Loading checkpoint")
     # checkpoint = torch.load(checkpoint_file, map_location="cuda")
     checkpoint = torch.load(checkpoint_file, map_location=config.DEVICE)
@@ -169,7 +160,7 @@ def remove_dups():
             '''takes an image path, returns a hash value'''
 
             image = Image.open(path)
-            # print(path)
+            # print(path) # debug
 
             # remove alpha
             if image.mode != 'RGBA':
@@ -214,6 +205,7 @@ def remove_dups():
 def download_models(args):
     '''download pre-trained models and images for various models''' 
 
+    # select model
     if args == 'cars':
         models_url = 'https://drive.google.com/uc?id=1-2pczU0Vsx61ru6aYJuwaV-By4Mdqarj' # ProGAN_Cars.zip
         imgs_url = 'https://drive.google.com/uc?id=1l0liZMZV3PGDonJS8FcNq_-5W9oiVP9B' # car_imgs.zip
@@ -240,6 +232,7 @@ def download_models(args):
         img_name = 'imgs'
         model_name = 'ProGAN_Potato'
 
+    # init generic variables
     model_file = "models.zip"
     imgs_file = "imgs.zip"
 
@@ -283,24 +276,25 @@ def generate_samples(args):
             noise = torch.tensor(truncnorm.rvs(-truncation, truncation, size=(1, config.Z_DIM, 1, 1)), device=config.DEVICE, dtype=torch.float32)
             # noise = torch.randn(1, config.Z_DIM, 1, 1).to(config.DEVICE)
             img = gen(noise, alpha, img_size)
-            if not os.path.exists(config.RESULTS): # check if results folder exists
-                os.makedirs(config.RESULTS) # create results folder if does not exist
-            print(Path(f"{config.RESULTS}/img_{i}.png"))
-            save_image(img*0.5+0.5, Path(f"{config.RESULTS}/img_{i}.png"))
+            if not os.path.exists(config.RESULTS): # check if results directory exists
+                os.makedirs(config.RESULTS) # create results directory if does not exist
+            # print(Path(f"{config.RESULTS}/img_{i}.png")) # debug
+            save_image(img*0.5+0.5, Path(f"{config.RESULTS}/img_{i}.png")) # save to directory folder
     gen.train()
 
 def apply_transform(args):
-    '''yields a single real image batch to results folder'''
-    if not os.path.exists(config.RESULTS): # check if results folder exists
-        os.makedirs(config.RESULTS) # create results folder if does not exist
+    '''yields a single real image batch with transforms to results directory'''
+    if not os.path.exists(config.RESULTS): # check if results directory exists
+        os.makedirs(config.RESULTS) # create results directory if does not exist
 
-    loader, _ = get_loader(128)
-    loop = tqdm(loader, leave=True)
+    loader, _ = get_loader(128) # get loader at 128x128
+    loop = tqdm(loader, leave=True) # init loop
 
+    # loop through dataset; break at defined range
     for batch_idx, (real, _) in enumerate(loop):
         real = real.to(config.DEVICE)
         for i in range(real.shape[0]):
-            torchvision.utils.save_image(real[i, :, :, :]*0.5+0.5, Path(f"{config.RESULTS}/img_{batch_idx}_{i}.png"))
+            torchvision.utils.save_image(real[i, :, :, :]*0.5+0.5, Path(f"{config.RESULTS}/img_{batch_idx}_{i}.png")) # save each transformed image to results directory
         if batch_idx == args:
             break
 
@@ -309,15 +303,21 @@ def apply_transform(args):
 @click.argument('option', required=False)
 @click.argument('args', required=False, nargs=-1)
 def cli(args, option):
+    '''cli driver'''
+    # available commands
     commands = ['init', 'sample', 'download', 'removedups','transform']
 
+    # base case
     if not option:
         print(f'no option provided')
+    # base case
     elif option not in commands:
         print(f'invalid option: {option}')
+    # init
     elif option == 'init':
         print(f'option: {option}')
         init()
+    # sample
     elif option == 'sample':
         if not args:
             args = (10,4)
@@ -325,6 +325,7 @@ def cli(args, option):
             args = tuple(map(int, args))
         print(f'sample: {args}')
         generate_samples(args)
+    # download
     elif option == 'download':
         if not args:
             args = ('cyber',)
@@ -334,9 +335,11 @@ def cli(args, option):
             print('please provide a valid option [cars, cyber, dogs, faces, potatoes]')
         print(f'option: {option}')
         download_models(args[0])
+    # remove duplicate images in imgs directory
     elif option == 'removedups':
         print(f'option: {option}')
         remove_dups()
+    # apply transform to imgs directory
     elif option == 'transform':
         if not args:
             args = float('inf')

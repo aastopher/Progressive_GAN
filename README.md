@@ -28,7 +28,7 @@ The purpose of this project is to expand knowledge of traditional GAN architectu
 * Size factors: `0 = 4x4, 1 = 8x8, 2 = 16x16, 3 = 32x32, 4 = 64x64, 5 = 128x128, 6 = 256x256, 7 = 512x512, 8 = 1024x1024`
 
 ### Preview Image Transforms
-* `python utils.py transform` - generates output images, by default this will output all batches at 512x512.
+* `python utils.py transform` - generates output images, by default this will output all batches at 128x128.
 * This command can be customized to generate a chosen amount of batches `python utils.py transform <num_batches>`
 
 ### Remove Duplicate Images

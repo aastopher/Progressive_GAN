@@ -40,11 +40,7 @@ class InceptionV3(nn.Module):
             'Last possible output block index is 3'
 
         self.blocks = nn.ModuleList()
-
-        
         inception = models.inception_v3(weights=models.Inception_V3_Weights.IMAGENET1K_V1)
-
-        
 
         # Block 0: input to maxpool1
         block0 = [
@@ -193,4 +189,3 @@ def calculate_fretchet(images_real, images_fake, model):
      """get fretchet distance"""
      fid_value = calculate_frechet_distance(mu_1, std_1, mu_2, std_2)
      return fid_value
-
