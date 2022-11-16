@@ -151,9 +151,21 @@ def init():
             zip_ref.extractall()
 
         os.rename("ProGAN_logs","logs")
-        os.mkdir(config.MODEL_PATH)
-        os.mkdir(config.RESULTS)
         os.remove("logs.zip")
+    else:
+        print('logs directory already exists')
+
+    # create model folder if needed
+    if not os.path.exists(config.MODEL_PATH):
+        os.mkdir(config.MODEL_PATH)
+    else:
+        print('models directory already exists')
+
+    # create results folder if needed
+    if not os.path.exists(config.RESULTS):
+        os.mkdir(config.RESULTS)
+    else:
+        print('results directory already exists')
 
 def remove_dups():
     '''Inspired from https://github.com/JohannesBuchner/imagehash repository'''
@@ -235,8 +247,19 @@ def download_models(args):
         model_name = 'ProGAN_Potato'
 
     # init generic variables
-    model_file = "models.zip"
     imgs_file = "imgs.zip"
+    model_file = "models.zip"
+
+    # download imgs if imgs folder does not exist
+    if not os.path.exists(config.DATASET):
+        gdown.download(imgs_url, imgs_file, quiet=False)
+
+        with zipfile.ZipFile(imgs_file, 'r') as zip_ref:
+            zip_ref.extractall()
+        os.rename(img_name, "imgs")
+        os.remove(imgs_file)
+    else:
+        print('imgs directory already exists')
 
     # download models if models folder does not exist
     if not os.path.exists(config.MODEL_PATH):
@@ -246,15 +269,8 @@ def download_models(args):
             zip_ref.extractall()
         os.rename(model_name,"models")
         os.remove(model_file)
-
-    # download logs if models folder does not exist
-    if not os.path.exists(config.DATASET):
-        gdown.download(imgs_url, imgs_file, quiet=False)
-
-        with zipfile.ZipFile(imgs_file, 'r') as zip_ref:
-            zip_ref.extractall()
-        os.rename(img_name, "imgs")
-        os.remove(imgs_file)
+    else:
+        print('models directory already exists')
 
 def generate_samples(args):
     """
